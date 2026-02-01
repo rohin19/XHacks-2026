@@ -106,13 +106,18 @@ def _serialize_payload(raw: dict[str, Any]) -> dict[str, Any]:
         if key not in raw:
             if key == "published_at":
                 raise ValueError("published_at is required")
+            if key == "id":
+                continue  # omit id so DB uses gen_random_uuid()
             out[key] = None
             continue
         val = raw[key]
+        if key == "id":
+            if val is None:
+                continue  # omit id so DB uses gen_random_uuid()
+            out[key] = str(val) if hasattr(val, "hex") else val
+            continue
         if key in ("start_date", "end_date", "published_at", "updated_at", "created_at"):
             out[key] = _to_iso(val)
-        elif key == "id" and val is not None:
-            out[key] = str(val) if hasattr(val, "hex") else val
         elif key == "neighborhood_id" and val is not None:
             out[key] = str(val) if hasattr(val, "hex") else val
         else:
