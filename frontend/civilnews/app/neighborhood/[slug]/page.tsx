@@ -70,7 +70,7 @@ export default function NeighborhoodDashboard({ params }: Props) {
                 onClick={() => setSidebarOpen(!sidebarOpen)}
                 className="fixed top-4 lg:top-6 left-4 lg:left-6 z-30 p-2 rounded-lg bg-white border-2 border-[#E1E8ED] shadow-lg hover:bg-[#F8FAFC] transition-all"
             >
-                <Menu size={20} />
+                <Menu size={20} className="stroke-[#1E3A8A]" />
             </button>
 
             {/* Top Right Button Group */}
@@ -85,8 +85,8 @@ export default function NeighborhoodDashboard({ params }: Props) {
                 <button
                     onClick={() => setShowMap(!showMap)}
                     className={`px-3 lg:px-4 py-2 rounded-lg border-2 shadow-lg font-['Inter',sans-serif] text-xs lg:text-sm font-medium transition-all flex items-center gap-2 ${showMap
-                            ? "bg-[#1E3A8A] border-[#1E3A8A] text-white"
-                            : "bg-white border-[#E1E8ED] hover:bg-[#F8FAFC]"
+                        ? "bg-[#1E3A8A] border-[#1E3A8A] text-white"
+                        : "bg-white border-[#E1E8ED] text-[#1E3A8A] hover:bg-[#F8FAFC]"
                         }`}
                 >
                     <Map size={16} />
