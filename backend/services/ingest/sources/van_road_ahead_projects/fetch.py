@@ -148,7 +148,6 @@ if __name__ == "__main__":
         links = extract_endpoint_links(data)
 
         print(f"Dataset: {dataset_id}")
-        test_fetch()
         if records_count is not None:
             print(f"Records count: {records_count}")
         if links:
