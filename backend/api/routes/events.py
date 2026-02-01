@@ -20,7 +20,7 @@ class EventType(str, Enum):
     ROAD_CLOSURE = "ROAD_CLOSURE"
     SERVICE_REQUEST = "SERVICE_REQUEST"
     CITY_PROJECT = "CITY_PROJECT"
-    PROJECT = "PROJECT"
+    COUNCIL_VOTE = "COUNCIL_VOTE"
     PERMIT = "PERMIT"
     VOTE = "VOTE"
 
@@ -49,6 +49,7 @@ def list_events(
     start_date: date = Query(..., description="Start of date range (inclusive), e.g. startOfDay(now)"),
     end_date: date = Query(..., description="End of date range (inclusive), e.g. endOfDay(now)"),
     event_type: Optional[EventType] = Query(None, description="Filter by EVENT_TYPE"),
+    neighborhood_id: Optional[UUID] = Query(None, description="Filter by neighborhood (events in this neighborhood only)"),
 ) -> list[EventResponse]:
     """
     Return events that overlap the query window [from, to].
@@ -70,6 +71,8 @@ def list_events(
     )
     if event_type is not None:
         q = q.eq("type", event_type.value)
+    if neighborhood_id is not None:
+        q = q.eq("neighborhood_id", str(neighborhood_id))
     q = q.order("published_at", desc=True)
     r = q.execute()
 
