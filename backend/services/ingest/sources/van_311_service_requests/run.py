@@ -1,14 +1,20 @@
 """
-Run the 311 ETL pipeline: fetch -> transform -> load.
-Configure via VAN_311_API_BASE and DATABASE_URL environment variables.
+Run the 311 ETL pipeline: fetch -> transform -> load (shared loader).
+Configure via VAN_311_API_BASE; load uses Supabase (sb_url/sb_secret or SUPABASE_*).
 """
 
 import logging
 import sys
+from pathlib import Path
+
+# Add backend root so we can import services.ingest.load_events
+_BACKEND_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent
+if str(_BACKEND_ROOT) not in sys.path:
+    sys.path.insert(0, str(_BACKEND_ROOT))
 
 from fetch import fetch_raw_requests
 from transform import transform_batch
-from load import upsert_events
+from services.ingest.load_events import load_events
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s:%(message)s")
 logger = logging.getLogger(__name__)
@@ -19,8 +25,8 @@ def run(limit: int = 100, offset: int = 0) -> None:
     logger.info("Fetched %s raw record(s)", len(raw))
     events = transform_batch(raw)
     logger.info("Transformed %s event(s)", len(events))
-    inserted, updated = upsert_events(events)
-    logger.info("Done: %s inserted, %s updated", inserted, updated)
+    inserted = load_events(events, resolve_neighborhood_by_name=True)
+    logger.info("Done: %s inserted", inserted)
 
 
 if __name__ == "__main__":
