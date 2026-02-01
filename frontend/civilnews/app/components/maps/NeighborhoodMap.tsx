@@ -104,7 +104,7 @@ export function NeighborhoodMap({
                         zoom: zoom
                     }}
                     style={{ width: '100%', height: '100%' }}
-                    mapStyle={GLASS_MAP_STYLE as any}
+                    mapStyle="mapbox://styles/mapbox/light-v11"
                     interactive={true}
                 >
                     {/* Neighborhood Polygon */}

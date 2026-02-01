@@ -88,7 +88,10 @@ class ApiClient {
         // First get all events, then filter by neighborhood on the client
         // TODO: Update backend to support neighborhood_id filter
         const events = await this.getEvents(params);
-        return events.filter(event => event.neighborhood_id === neighborhoodId);
+        return events.filter(event =>
+            event.neighborhood_id === neighborhoodId ||
+            event.type === 'COUNCIL_VOTE'
+        );
     }
 
     /**

@@ -14,6 +14,9 @@ export interface Event {
     summary?: string;
     status?: 'pending' | 'approved';
     source?: string;
+    end_date?: string;
+    published_date?: string;
+    published_at_raw?: string;
 }
 
 /**
@@ -71,6 +74,22 @@ function convertApiEventToEvent(apiEvent: ApiEvent, index: number): Event {
         hour12: true
     });
 
+    // Format dates for display
+    const publishedDateString = publishedDate.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
+
+    let endDateString = undefined;
+    if (apiEvent.end_date) {
+        endDateString = new Date(apiEvent.end_date).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    }
+
     return {
         id: index + 1, // Use index as id since UUID is too long
         title: apiEvent.title || 'Untitled Event',
@@ -80,8 +99,11 @@ function convertApiEventToEvent(apiEvent: ApiEvent, index: number): Event {
         lat: coords.lat,
         lng: coords.lng,
         summary: apiEvent.summary || undefined,
-        status: ' ', // Default to approved for now
-        source: apiEvent.source
+        status: undefined, // Default to undefined to satisfy type
+        source: apiEvent.source,
+        end_date: endDateString,
+        published_date: publishedDateString,
+        published_at_raw: apiEvent.published_at
     };
 }
 
@@ -114,9 +136,14 @@ export function useNeighborhoodEvents(neighborhoodId?: string) {
                     end_date: endDate.toISOString().split('T')[0]
                 });
 
-                const convertedEvents = apiEvents.map((event, index) =>
-                    convertApiEventToEvent(event, index)
-                );
+                const convertedEvents = apiEvents
+                    .map((event, index) => convertApiEventToEvent(event, index))
+                    .sort((a, b) => {
+                        // Sort by published_at_raw descending
+                        const dateA = new Date(a.published_at_raw || 0).getTime();
+                        const dateB = new Date(b.published_at_raw || 0).getTime();
+                        return dateB - dateA;
+                    });
 
                 setEvents(convertedEvents);
             } catch (err) {
@@ -157,9 +184,14 @@ export function useEvents() {
                     end_date: endDate.toISOString().split('T')[0]
                 });
 
-                const convertedEvents = apiEvents.map((event, index) =>
-                    convertApiEventToEvent(event, index)
-                );
+                const convertedEvents = apiEvents
+                    .map((event, index) => convertApiEventToEvent(event, index))
+                    .sort((a, b) => {
+                        // Sort by published_at_raw descending
+                        const dateA = new Date(a.published_at_raw || 0).getTime();
+                        const dateB = new Date(b.published_at_raw || 0).getTime();
+                        return dateB - dateA;
+                    });
 
                 setEvents(convertedEvents);
             } catch (err) {

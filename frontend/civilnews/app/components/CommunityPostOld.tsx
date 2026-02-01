@@ -6,7 +6,7 @@ const categoryConfig = {
     color: '#1E3A8A',
     bgColor: '#EEF2FF',
     borderColor: '#C7D2FE',
-    label: 'Development',
+    label: 'City Projects',
   },
   road: {
     icon: Construction,
@@ -54,7 +54,7 @@ export function CommunityPostOld({ post }: CommunityPostOldProps) {
       <div className="p-6">
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">
-          <div 
+          <div
             className="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm"
             style={{ backgroundColor: config.bgColor }}
           >
@@ -70,11 +70,10 @@ export function CommunityPostOld({ post }: CommunityPostOldProps) {
             </span>
           </div>
           <span
-            className={`px-3.5 py-1.5 rounded-full text-[11px] tracking-wider font-bold uppercase ${
-              post.status === 'approved'
+            className={`px-3.5 py-1.5 rounded-full text-[11px] tracking-wider font-bold uppercase ${post.status === 'approved'
                 ? 'bg-[#D1FAE5] text-[#047857] border border-[#A7F3D0]'
                 : 'bg-[#FEF3C7] text-[#B45309] border border-[#FDE68A]'
-            }`}
+              }`}
           >
             {post.status}
           </span>

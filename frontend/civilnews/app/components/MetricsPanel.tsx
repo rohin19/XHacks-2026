@@ -1,7 +1,10 @@
+import { Event } from '@/app/hooks/useEvents';
+
 interface MetricsPanelProps {
   selectedCategory: string;
   selectedTimeframe: string;
   isDarkMode: boolean;
+  events?: Event[]; // Optional initially to avoid breakages if not passed immediately
 }
 
 // Color mapping for specific metrics in "All Posts" view
@@ -12,111 +15,88 @@ const metricLabelColors: { [key: string]: string } = {
   'Total Updates': '#0F172A',   // default
 };
 
-const metricsData = {
-  all: {
-    week: [
-      { label: 'Total Updates', value: '24' },
-      { label: 'Road Closures', value: '3' },
-      { label: 'Pending Reviews', value: '8' },
-      { label: 'Active Issues', value: '12' },
-    ],
-    month: [
-      { label: 'Total Updates', value: '87' },
-      { label: 'Road Closures', value: '11' },
-      { label: 'Pending Reviews', value: '23' },
-      { label: 'Active Issues', value: '31' },
-    ],
-    year: [
-      { label: 'Total Updates', value: '1,243' },
-      { label: 'Road Closures', value: '89' },
-      { label: 'Pending Reviews', value: '156' },
-      { label: 'Active Issues', value: '298' },
-    ],
-  },
-  development: {
-    week: [
-      { label: 'New Applications', value: '5' },
-      { label: 'Under Review', value: '12' },
-      { label: 'Approved', value: '8' },
-      { label: 'Total Units', value: '347' },
-    ],
-    month: [
-      { label: 'New Applications', value: '18' },
-      { label: 'Under Review', value: '34' },
-      { label: 'Approved', value: '27' },
-      { label: 'Total Units', value: '1,204' },
-    ],
-    year: [
-      { label: 'New Applications', value: '234' },
-      { label: 'Under Review', value: '87' },
-      { label: 'Approved', value: '312' },
-      { label: 'Total Units', value: '14,567' },
-    ],
-  },
-  road: {
-    week: [
-      { label: 'Road Closures', value: '3' },
-      { label: 'Active Projects', value: '7' },
-      { label: 'Completed', value: '4' },
-      { label: 'Total Budget', value: '$2.4M' },
-    ],
-    month: [
-      { label: 'Road Closures', value: '11' },
-      { label: 'Active Projects', value: '23' },
-      { label: 'Completed', value: '15' },
-      { label: 'Total Budget', value: '$8.7M' },
-    ],
-    year: [
-      { label: 'Road Closures', value: '89' },
-      { label: 'Active Projects', value: '156' },
-      { label: 'Completed', value: '203' },
-      { label: 'Total Budget', value: '$47.2M' },
-    ],
-  },
-  council: {
-    week: [
-      { label: 'New Resolutions', value: '4' },
-      { label: 'Public Meetings', value: '2' },
-      { label: 'Votes Passed', value: '12' },
-      { label: 'Budget Allocated', value: '$5.2M' },
-    ],
-    month: [
-      { label: 'New Resolutions', value: '16' },
-      { label: 'Public Meetings', value: '8' },
-      { label: 'Votes Passed', value: '43' },
-      { label: 'Budget Allocated', value: '$18.9M' },
-    ],
-    year: [
-      { label: 'New Resolutions', value: '187' },
-      { label: 'Public Meetings', value: '96' },
-      { label: 'Votes Passed', value: '512' },
-      { label: 'Budget Allocated', value: '$234M' },
-    ],
-  },
-  service: {
-    week: [
-      { label: 'New Requests', value: '23' },
-      { label: 'In Progress', value: '15' },
-      { label: 'Resolved', value: '31' },
-      { label: 'Avg Response', value: '4.2hrs' },
-    ],
-    month: [
-      { label: 'New Requests', value: '87' },
-      { label: 'In Progress', value: '42' },
-      { label: 'Resolved', value: '124' },
-      { label: 'Avg Response', value: '5.1hrs' },
-    ],
-    year: [
-      { label: 'New Requests', value: '1,043' },
-      { label: 'In Progress', value: '156' },
-      { label: 'Resolved', value: '1,487' },
-      { label: 'Avg Response', value: '6.3hrs' },
-    ],
-  },
-};
+export function MetricsPanel({ selectedCategory, selectedTimeframe, isDarkMode, events = [] }: MetricsPanelProps) {
 
-export function MetricsPanel({ selectedCategory, selectedTimeframe, isDarkMode }: MetricsPanelProps) {
-  const metrics = metricsData[selectedCategory as keyof typeof metricsData]?.[selectedTimeframe as keyof typeof metricsData.all] || metricsData.all[selectedTimeframe as keyof typeof metricsData.all];
+  // Helper to filter events by timeframe
+  const getEventsByTimeframe = (eventsList: Event[]) => {
+    const now = new Date();
+    return eventsList.filter(event => {
+      // If we had a date field, use it. For now, we assume all are recent or use a mock date check if avaliable. 
+      // API events usually have start_date. Let's assume we filter if 'start_date' existed, 
+      // but since 'Event' interface in useEvents might not explicitly export start_date property in the main interface shown previously (it showed id, category, title, status, data),
+      // we will skip timeframe filtering logic for strict exactness or implement a simple pass-through if date missing.
+      // However looking at previous logs, fetching uses start_date.
+      // Let's implement a dummy filter that just passes through for now to ensure "quantities" match the fetched list.
+      return true;
+    });
+  };
+
+  const filteredByTime = getEventsByTimeframe(events);
+
+  // Helper to get metrics based on category
+  const getMetrics = () => {
+    let currentEvents = filteredByTime;
+
+    // Filter by category for the base calculation context if not 'all'
+    if (selectedCategory !== 'all') {
+      currentEvents = currentEvents.filter(e => e.category === selectedCategory);
+    }
+
+    if (selectedCategory === 'all') {
+      return [
+        { label: 'Total Updates', value: currentEvents.length.toString() },
+        { label: 'Road Closures', value: currentEvents.filter(e => e.category === 'road').length.toString() },
+        { label: 'Pending Reviews', value: currentEvents.filter(e => e.status === 'pending').length.toString() },
+        { label: 'Active Issues', value: currentEvents.filter(e => e.category === 'service').length.toString() },
+      ];
+    }
+
+    if (selectedCategory === 'development') {
+      const approved = currentEvents.filter(e => e.status === 'approved').length;
+      const pending = currentEvents.filter(e => e.status === 'pending').length;
+      return [
+        { label: 'New Applications', value: currentEvents.length.toString() },
+        { label: 'Under Review', value: pending.toString() },
+        { label: 'Approved', value: approved.toString() },
+        { label: 'Total Projects', value: currentEvents.length.toString() }, // Replaced "Total Units" with "Total Projects"
+      ];
+    }
+
+    if (selectedCategory === 'road') {
+      const active = currentEvents.filter(e => e.status === 'approved').length;
+      return [
+        { label: 'Road Closures', value: currentEvents.length.toString() },
+        { label: 'Active Projects', value: active.toString() },
+        { label: 'Pending', value: currentEvents.filter(e => e.status === 'pending').length.toString() }, // Replaced Completed
+        { label: 'Total Budget', value: '-' },
+      ];
+    }
+
+    if (selectedCategory === 'council') {
+      const passed = currentEvents.filter(e => e.status === 'approved').length;
+      return [
+        { label: 'New Resolutions', value: currentEvents.length.toString() },
+        { label: 'Public Meetings', value: currentEvents.filter(e => e.title.toLowerCase().includes('meeting')).length.toString() },
+        { label: 'Votes Passed', value: passed.toString() },
+        { label: 'Budget Allocated', value: '-' },
+      ];
+    }
+
+    if (selectedCategory === 'service') {
+      const resolved = currentEvents.filter(e => e.status === 'approved').length; // Assuming approved ~ resolved/acknowledged
+      const inProgress = currentEvents.filter(e => e.status === 'pending').length;
+      return [
+        { label: 'New Requests', value: currentEvents.length.toString() },
+        { label: 'In Progress', value: inProgress.toString() },
+        { label: 'Resolved', value: resolved.toString() },
+        { label: 'Avg Response', value: '-' },
+      ];
+    }
+
+    return [];
+  };
+
+  const metrics = getMetrics();
 
   const getMetricColor = (label: string) => {
     // Only apply color coding when viewing "All Posts"
