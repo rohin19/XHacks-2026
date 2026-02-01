@@ -31,6 +31,7 @@ def run(limit: int = 100, offset: int = 0) -> None:
 
 if __name__ == "__main__":
     try:
+        # Recent events first (order_by=service_request_open_timestamp desc in fetch)
         run(limit=100, offset=0)
     except Exception as e:
         logger.exception("Pipeline failed: %s", e)
