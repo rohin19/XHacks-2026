@@ -1,4 +1,4 @@
-import { CommunityPostNew } from './CommunityPostNew';
+import { CommunityPost } from './CommunityPost';
 
 interface Event {
   id: number;
@@ -99,7 +99,7 @@ export function CommunityFeed({
   return (
     <div className="flex flex-col gap-4 lg:gap-6">
       {filteredEvents.map((event) => (
-        <CommunityPostNew
+        <CommunityPost
           key={event.id}
           post={{
             category: event.category,
