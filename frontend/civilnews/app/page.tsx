@@ -1,17 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { Search } from "lucide-react";
-import type { Metadata } from "next";
+import dynamic from "next/dynamic";
+import AddressSearch from "@/app/components/search/AddressSearch";
+
+// Dynamically import map to avoid SSR issues
+const LandingMap = dynamic(() => import("@/app/components/maps/LandingMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center bg-gray-900">
+      <p className="text-white text-sm">Loading map...</p>
+    </div>
+  ),
+});
 
 export default function LandingPage() {
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Searching for:", searchQuery);
-    // TODO: Implement address search with Mapbox Geocoding
-  };
+  const [userLocation, setUserLocation] = useState<[number, number] | undefined>(undefined);
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
@@ -100,89 +104,8 @@ export default function LandingPage() {
               your news.
             </h1>
 
-            {/* Glass Search Bar */}
-            <form
-              onSubmit={handleSearch}
-              className="max-w-2xl w-full"
-            >
-              <div
-                className="relative flex items-center group"
-                style={{
-                  background: "rgba(255, 255, 255, 0.12)",
-                  backdropFilter: "blur(40px)",
-                  WebkitBackdropFilter: "blur(40px)",
-                  border: "1px solid rgba(255, 255, 255, 0.2)",
-                  borderRadius: "100px",
-                  transition:
-                    "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-                  boxShadow:
-                    "0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.15)",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background =
-                    "rgba(255, 255, 255, 0.18)";
-                  e.currentTarget.style.border =
-                    "1px solid rgba(255, 255, 255, 0.3)";
-                  e.currentTarget.style.boxShadow =
-                    "0 12px 48px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background =
-                    "rgba(255, 255, 255, 0.12)";
-                  e.currentTarget.style.border =
-                    "1px solid rgba(255, 255, 255, 0.2)";
-                  e.currentTarget.style.boxShadow =
-                    "0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.15)";
-                }}
-              >
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) =>
-                    setSearchQuery(e.target.value)
-                  }
-                  placeholder="enter your address"
-                  className="flex-1 bg-transparent outline-none px-8 py-5 text-base"
-                  style={{
-                    color: "#ffffff",
-                    fontFamily: "'Inter', sans-serif",
-                    fontWeight: 300,
-                    letterSpacing: "-0.01em",
-                  }}
-                />
-                <button
-                  type="submit"
-                  className="m-2 p-4 rounded-full transition-all"
-                  style={{
-                    background: "rgba(150, 150, 150, 0.7)",
-                    color: "white",
-                    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
-                    transition: "all 0.3s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background =
-                      "rgba(120, 120, 120, 0.9)";
-                    e.currentTarget.style.boxShadow =
-                      "0 6px 28px rgba(0, 0, 0, 0.3)";
-                    e.currentTarget.style.transform =
-                      "scale(1.05)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background =
-                      "rgba(150, 150, 150, 0.7)";
-                    e.currentTarget.style.boxShadow =
-                      "0 4px 20px rgba(0, 0, 0, 0.2)";
-                    e.currentTarget.style.transform =
-                      "scale(1)";
-                  }}
-                >
-                  <Search
-                    className="w-5 h-5"
-                    strokeWidth={1.5}
-                  />
-                </button>
-              </div>
-            </form>
+            {/* Address Search Bar with Geocoding */}
+            <AddressSearch onLocationSelect={(location) => setUserLocation(location)} />
 
             {/* Tagline - Centered Below Search */}
             <p
@@ -243,33 +166,21 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Bottom Globe Placeholder */}
+        {/* Bottom Map */}
         <div className="px-8 pb-8">
           <div
-            className="w-full flex items-center justify-center"
+            className="w-full backdrop-blur-md"
             style={{
-              height: "35vh",
-              background: "rgba(255, 255, 255, 0.08)",
-              backdropFilter: "blur(30px)",
-              WebkitBackdropFilter: "blur(30px)",
-              border: "1px dashed rgba(255, 255, 255, 0.2)",
+              height: "60vh",
               borderRadius: "16px",
+              overflow: "hidden",
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
+              border: "1px solid rgba(255, 255, 255, 0.4)",
               boxShadow:
-                "0 4px 24px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
+                "0 8px 32px rgba(31, 38, 135, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3)",
             }}
           >
-            <p
-              style={{
-                fontFamily: "'Courier New', monospace",
-                fontSize: "10px",
-                fontWeight: 400,
-                color: "rgba(255, 255, 255, 0.4)",
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-              }}
-            >
-              map component placeholder
-            </p>
+            <LandingMap userLocation={userLocation} />
           </div>
         </div>
       </div>
