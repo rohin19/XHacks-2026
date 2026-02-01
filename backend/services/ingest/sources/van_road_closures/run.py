@@ -50,7 +50,7 @@ def run(limit: int = 100, offset: int = 0, *, dry_run: bool = False) -> None:
 if __name__ == "__main__":
     try:
         # set dry_run=True to avoid writing to Supabase to test the pipeline
-        run(limit=100, offset=0, dry_run=True)
+        run(limit=100, offset=0, dry_run=False)
     except Exception as e:
         logger.exception("Pipeline failed: %s", e)
         sys.exit(1)
