@@ -104,15 +104,12 @@ export default function LandingPage() {
               your news.
             </h1>
 
-            {/* Address Search Bar with Geocoding */}
-            <AddressSearch onLocationSelect={(location) => setUserLocation(location)} />
-
-            {/* Tagline - Centered Below Search */}
+            {/* Tagline - Above Search Bar */}
             <p
-              className="mt-6 text-center"
+              className="mb-6 text-center"
               style={{
                 fontFamily: "'Inter', sans-serif",
-                fontSize: "18px",
+                fontSize: "19px",
                 fontWeight: 300,
                 color: "rgba(255, 255, 255, 0.7)",
                 letterSpacing: "0.02em",
@@ -124,15 +121,18 @@ export default function LandingPage() {
               community.
             </p>
 
-            {/* Meta Information - Centered and Larger with Enhanced Letter Spacing */}
+            {/* Address Search Bar with Geocoding */}
+            <AddressSearch onLocationSelect={(location) => setUserLocation(location)} />
+
+            {/* Meta Information - Enhanced Visibility */}
             <div className="mt-10 flex gap-12 justify-center flex-wrap">
               <span
                 style={{
                   fontFamily: "'Courier New', monospace",
-                  fontSize: "13px",
-                  fontWeight: 400,
-                  color: "rgba(255, 255, 255, 0.6)",
-                  letterSpacing: "0.1em",
+                  fontSize: "15px",
+                  fontWeight: 500,
+                  color: "rgba(255, 255, 255, 0.85)",
+                  letterSpacing: "0.12em",
                   textTransform: "uppercase",
                 }}
               >
@@ -141,10 +141,10 @@ export default function LandingPage() {
               <span
                 style={{
                   fontFamily: "'Courier New', monospace",
-                  fontSize: "13px",
-                  fontWeight: 400,
-                  color: "rgba(255, 255, 255, 0.6)",
-                  letterSpacing: "0.1em",
+                  fontSize: "15px",
+                  fontWeight: 500,
+                  color: "rgba(255, 255, 255, 0.85)",
+                  letterSpacing: "0.12em",
                   textTransform: "uppercase",
                 }}
               >
@@ -153,10 +153,10 @@ export default function LandingPage() {
               <span
                 style={{
                   fontFamily: "'Courier New', monospace",
-                  fontSize: "13px",
-                  fontWeight: 400,
-                  color: "rgba(255, 255, 255, 0.6)",
-                  letterSpacing: "0.1em",
+                  fontSize: "15px",
+                  fontWeight: 500,
+                  color: "rgba(255, 255, 255, 0.85)",
+                  letterSpacing: "0.12em",
                   textTransform: "uppercase",
                 }}
               >

@@ -52,8 +52,8 @@ export const GLASS_MAP_STYLE = {
             source: 'mapbox',
             'source-layer': 'landuse',
             paint: {
-                'line-color': 'rgba(255, 255, 255, 0.6)',
-                'line-width': 1.5
+                'line-color': 'rgba(255, 255, 255, 0.25)',  // Reduced to match other lines
+                'line-width': 0.6  // Reduced to match other lines
             }
         },
         {
@@ -62,8 +62,8 @@ export const GLASS_MAP_STYLE = {
             source: 'mapbox',
             'source-layer': 'road',
             paint: {
-                'line-color': 'rgba(255, 255, 255, 0.7)',
-                'line-width': 1.5,
+                'line-color': 'rgba(255, 255, 255, 0.35)',  // Further reduced
+                'line-width': 1.0,  // Further reduced
                 'line-blur': 0.5
             }
         },
@@ -83,8 +83,8 @@ export const GLASS_MAP_STYLE = {
             source: 'mapbox',
             'source-layer': 'building',
             paint: {
-                'line-color': 'rgba(255, 255, 255, 0.5)',
-                'line-width': 1
+                'line-color': 'rgba(255, 255, 255, 0.25)',  // Further reduced
+                'line-width': 0.6  // Further reduced
             }
         },
         {

@@ -5,9 +5,11 @@ import { FilterBar } from "@/app/components/FilterBar";
 import { CommunityFeed } from "@/app/components/CommunityFeed";
 import { Sidebar } from "@/app/components/Sidebar";
 import { DarkModeToggle } from "@/app/components/DarkModeToggle";
-import { MapPanel } from "@/app/components/MapPanel";
-import { useState } from "react";
+import { NeighborhoodMap } from "@/app/components/maps/NeighborhoodMap";
+import { useState, useEffect, useMemo } from "react";
 import { Map, Menu } from "lucide-react";
+import { useNeighborhoodEvents, useEvents } from '@/app/hooks/useEvents';
+import { NEIGHBORHOODS } from "@/app/lib/neighborhoods";
 
 type Props = {
     params: Promise<{ slug: string }>;
@@ -23,6 +25,26 @@ export default function NeighborhoodDashboard({ params }: Props) {
     const [selectedPosts, setSelectedPosts] = useState<any[]>([]);
     const [sidebarOpen, setSidebarOpen] =
         useState<boolean>(false);
+    const [slug, setSlug] = useState<string>("");
+
+    // Unwrap the params promise
+    useEffect(() => {
+        params.then((p) => setSlug(p.slug));
+    }, [params]);
+
+    // Find the neighborhood by slug
+    const neighborhood = useMemo(() => {
+        if (!slug) return null;
+        return NEIGHBORHOODS.features.find(
+            (feature) => feature.properties.slug === slug
+        );
+    }, [slug]);
+
+    // Get the neighborhood ID for API calls
+    const neighborhoodId = neighborhood?.properties?.id?.toString();
+
+    // Fetch events for this neighborhood using Supabase UUID
+    const { events, loading, error } = useNeighborhoodEvents(neighborhoodId);
 
     const handleSelectPost = (post: any) => {
         setSelectedPosts((prev) => {
@@ -75,7 +97,7 @@ export default function NeighborhoodDashboard({ params }: Props) {
 
             {/* Top Right Button Group */}
             <div
-                className={`fixed top-4 lg:top-6 right-4 lg:right-6 z-30 flex items-center gap-2 lg:gap-3 transition-all ${showMap ? "lg:mr-[400px]" : ""}`}
+                className={`fixed top-4 lg:top-6 right-4 lg:right-6 z-30 flex items-center gap-2 lg:gap-3 transition-all ${showMap ? "lg:mr-[500px]" : ""}`}
             >
                 <DarkModeToggle
                     isDarkMode={isDarkMode}
@@ -104,9 +126,12 @@ export default function NeighborhoodDashboard({ params }: Props) {
             {/* Content */}
             <div className="relative z-10 flex min-h-screen">
                 <main
-                    className={`flex-1 px-4 lg:px-12 py-4 lg:py-8 overflow-y-auto transition-all ${showMap ? "lg:mr-[400px]" : ""}`}
+                    className={`flex-1 px-4 lg:px-12 py-4 lg:py-8 overflow-y-auto transition-all ${showMap ? "lg:mr-[500px]" : ""}`}
                 >
-                    <CommunityHeader isDarkMode={isDarkMode} />
+                    <CommunityHeader
+                        isDarkMode={isDarkMode}
+                        neighborhoodName={neighborhood?.properties?.name || 'Neighborhood'}
+                    />
                     <FilterBar
                         selectedCategory={selectedCategory}
                         setSelectedCategory={setSelectedCategory}
@@ -115,6 +140,9 @@ export default function NeighborhoodDashboard({ params }: Props) {
                         isDarkMode={isDarkMode}
                     />
                     <CommunityFeed
+                        events={events}
+                        loading={loading}
+                        error={error}
                         selectedCategory={selectedCategory}
                         selectedTimeframe={selectedTimeframe}
                         onSelectPost={handleSelectPost}
@@ -122,9 +150,10 @@ export default function NeighborhoodDashboard({ params }: Props) {
                     />
                 </main>
 
-                {/* Map Panel */}
-                {showMap && (
-                    <MapPanel
+                {/* Neighborhood Map Panel */}
+                {showMap && slug && (
+                    <NeighborhoodMap
+                        neighborhoodSlug={slug}
                         selectedPosts={selectedPosts}
                         onRemove={handleRemoveFromMap}
                         onClose={() => setShowMap(false)}

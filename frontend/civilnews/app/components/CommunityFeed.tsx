@@ -1,143 +1,119 @@
 import { CommunityPostNew } from './CommunityPostNew';
 
+interface Event {
+  id: number;
+  title: string;
+  category: 'development' | 'road' | 'council' | 'service';
+  time: string;
+  location?: string;
+  lat?: number;
+  lng?: number;
+  summary?: string;
+  status?: 'pending' | 'approved';
+  source?: string;
+}
+
 interface CommunityFeedProps {
+  events: Event[];
+  loading?: boolean;
+  error?: Error | null;
   selectedCategory: string;
   selectedTimeframe: string;
   onSelectPost?: (post: any) => void;
   selectedPostIds?: number[];
 }
 
-const posts = [
-  {
-    id: 1,
-    category: 'development',
-    title: 'Mixed-Use Development Proposed at 234 Main Street',
-    author: 'CityPlanningVan',
-    timestamp: '2 hours ago',
-    upvotes: 127,
-    comments: 34,
-    status: 'pending',
-    location: '234 Main St',
-    lat: 49.2327,
-    lng: -123.1207,
-    data: [
-      'Application No: DA-2026-0142',
-      'Height: 12 storeys | Units: 89 residential + 4 commercial',
-      'Public comment period ends: February 28, 2026',
-      'Summary: This mixed-use development aims to add much-needed residential density to the Main Street corridor while preserving street-level commercial character. Community feedback will be critical during the public comment period.',
-    ],
-  },
-  {
-    id: 2,
-    category: 'road',
-    title: 'Victoria Avenue Resurfacing Project Underway',
-    author: 'VancouverPublicWorks',
-    timestamp: '5 hours ago',
-    upvotes: 89,
-    comments: 12,
-    status: 'approved',
-    location: 'Victoria Ave',
-    lat: 49.2355,
-    lng: -123.1189,
-    data: [
-      'Project No: RD-2026-008',
-      'Duration: 6 weeks | Budget: $1.2M',
-      'Expected completion: March 15, 2026',
-      'Summary: The resurfacing project will improve road safety and reduce traffic noise. Temporary lane closures are expected during off-peak hours to minimize disruption.',
-    ],
-  },
-  {
-    id: 3,
-    category: 'council',
-    title: 'City Council Approves New Cycling Infrastructure Plan',
-    author: 'KerrisdaleResident',
-    timestamp: '1 day ago',
-    upvotes: 234,
-    comments: 67,
-    status: 'approved',
-    location: 'City-wide',
-    lat: 49.2300,
-    lng: -123.1250,
-    data: [
-      'Council Resolution: 2026-047',
-      'Investment: $4.5M over 3 years',
-      'Next phase: Community consultation Q2 2026',
-      'Summary: This infrastructure plan represents a significant investment in active transportation, with protected bike lanes planned for major arterial routes. Public consultation will help shape implementation priorities.',
-    ],
-  },
-  {
-    id: 4,
-    category: 'service',
-    title: 'Street Light Outage Reported on Elm Avenue',
-    author: 'SafetyFirst604',
-    timestamp: '3 hours ago',
-    upvotes: 45,
-    comments: 8,
-    status: 'pending',
-    location: 'Elm Ave & 3rd St',
-    lat: 49.2340,
-    lng: -123.1180,
-    data: [
-      'Request No: SR-2026-1847',
-      'Location: Elm Ave between 3rd & 5th Street',
-      'Status: Assigned to maintenance crew',
-      'Summary: The maintenance crew has been dispatched to address the outage. Residents are advised to use alternative routes during evening hours until repairs are completed.',
-    ],
-  },
-  {
-    id: 5,
-    category: 'development',
-    title: 'Heritage Building Renovation Approved for Downtown',
-    author: 'HeritageWatchVan',
-    timestamp: '2 days ago',
-    upvotes: 312,
-    comments: 91,
-    status: 'approved',
-    location: '156 Queen St',
-    lat: 49.2370,
-    lng: -123.1220,
-    data: [
-      'Application No: DA-2026-0098',
-      'Property: Former Post Office, 156 Queen St',
-      'Investment: $3.8M | Timeline: 18 months',
-      'Summary: The renovation will restore the historic facade while modernizing interior spaces for mixed commercial use. This project demonstrates the city\'s commitment to heritage preservation.',
-    ],
-  },
-  {
-    id: 6,
-    category: 'council',
-    title: 'New Park Development Proposed for Kerrisdale Community',
-    author: 'ParksBoard',
-    timestamp: '4 days ago',
-    upvotes: 456,
-    comments: 123,
-    status: 'pending',
-    location: '41st Ave & East Blvd',
-    lat: 49.2310,
-    lng: -123.1160,
-    data: [
-      'Proposal: 2.5 acre green space with playground',
-      'Location: Corner of 41st Ave & East Blvd',
-      'Community meeting: February 20, 2026',
-      'Summary: The proposed park would fill a critical gap in neighborhood green space and provide recreational facilities for families. Community input will be essential in shaping the final design.',
-    ],
-  },
-];
-
-export function CommunityFeed({ selectedCategory, selectedTimeframe, onSelectPost, selectedPostIds = [] }: CommunityFeedProps) {
-  const filteredPosts = posts.filter((post) => {
+export function CommunityFeed({
+  events,
+  loading = false,
+  error = null,
+  selectedCategory,
+  selectedTimeframe,
+  onSelectPost,
+  selectedPostIds = [],
+}: CommunityFeedProps) {
+  // Filter events by category
+  const filteredEvents = events.filter((event) => {
     if (selectedCategory === 'all') return true;
-    return post.category === selectedCategory;
+    return event.category === selectedCategory;
   });
 
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="text-center">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#1E3A8A] border-r-transparent"></div>
+          <p className="mt-4 font-['Inter',sans-serif] text-sm text-[#64748B]">
+            Loading events...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="text-center max-w-md">
+          <div className="mb-4 text-red-500">
+            <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <h3 className="font-['Work_Sans',sans-serif] font-bold text-lg text-[#0F172A] mb-2">
+            Failed to load events
+          </h3>
+          <p className="font-['Inter',sans-serif] text-sm text-[#64748B]">
+            {error.message || 'An error occurred while fetching events. Please try again later.'}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show empty state
+  if (filteredEvents.length === 0) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="text-center max-w-md">
+          <div className="mb-4 text-[#94A3B8]">
+            <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+            </svg>
+          </div>
+          <h3 className="font-['Work_Sans',sans-serif] font-bold text-lg text-[#0F172A] mb-2">
+            No events found
+          </h3>
+          <p className="font-['Inter',sans-serif] text-sm text-[#64748B]">
+            There are no events matching your current filters. Try adjusting your selection.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-4">
-      {filteredPosts.map((post) => (
-        <CommunityPostNew 
-          key={post.id} 
-          post={post} 
-          onSelect={() => onSelectPost?.(post)}
-          isSelected={selectedPostIds.includes(post.id)}
+    <div className="flex flex-col gap-4 lg:gap-6">
+      {filteredEvents.map((event) => (
+        <CommunityPostNew
+          key={event.id}
+          post={{
+            category: event.category,
+            title: event.title,
+            author: event.source || 'Unknown Source',
+            timestamp: event.time,
+            upvotes: 0,
+            comments: 0,
+            status: event.status || 'approved',
+            data: event.summary ? [event.summary] : [],
+            location: event.location,
+            lat: event.lat,
+            lng: event.lng
+          }}
+          onSelect={() => onSelectPost?.(event)}
+          isSelected={selectedPostIds.includes(event.id)}
         />
       ))}
     </div>
