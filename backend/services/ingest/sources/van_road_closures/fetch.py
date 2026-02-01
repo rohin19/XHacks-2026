@@ -15,6 +15,7 @@ import requests
 
 # --- Configuration ---
 API_BASE = "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets"
+RECORDS_BASE = "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/{dataset_id}/records"
 DEFAULT_DATASET_ID = "road-ahead-current-road-closures"
 
 
@@ -82,6 +83,40 @@ def extract_endpoint_links(dataset_info: dict) -> dict[str, str]:
         if isinstance(rel, str) and isinstance(href, str):
             result[rel] = href
     return result
+
+
+def fetch_raw_records(
+    dataset_id: str = DEFAULT_DATASET_ID,
+    *,
+    limit: int = 100,
+    offset: int = 0,
+    select: str | None = None,
+    timeout: int = 60,
+) -> list[dict]:
+    """
+    Fetch raw Road Ahead records from the Open Data API.
+    Returns the list of record dictionaries from the API 'results' array.
+    """
+    url = RECORDS_BASE.format(dataset_id=dataset_id)
+    params: dict[str, str | int] = {"limit": limit, "offset": offset}
+    if select:
+        params["select"] = select
+
+    try:
+        response = requests.get(url, params=params, timeout=timeout)
+        response.raise_for_status()
+    except requests.RequestException as e:
+        raise RuntimeError(f"Failed to fetch records for {dataset_id}: {e}") from e
+
+    data = response.json()
+    if not isinstance(data, dict):
+        raise ValueError("API response is not a JSON object")
+
+    results = data.get("results")
+    if not isinstance(results, list):
+        raise ValueError("API response missing or invalid 'results' array")
+
+    return results
 
 
 def test_fetch() -> None:
