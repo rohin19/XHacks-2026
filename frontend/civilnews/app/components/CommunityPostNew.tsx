@@ -6,7 +6,7 @@ const categoryConfig = {
     color: '#1E3A8A',
     bgColor: '#EEF2FF',
     borderColor: '#C7D2FE',
-    label: 'Development',
+    label: 'City Projects',
   },
   road: {
     icon: Construction,
@@ -44,6 +44,8 @@ interface CommunityPostNewProps {
     location?: string;
     lat?: number;
     lng?: number;
+    end_date?: string;
+    published_date?: string;
   };
   onSelect?: () => void;
   isSelected?: boolean;
@@ -82,7 +84,7 @@ export function CommunityPostNew({ post, onSelect, isSelected }: CommunityPostNe
 
         {/* Title */}
         <h2 className="font-['Work_Sans',sans-serif] font-bold text-lg lg:text-xl text-[#0F172A] mb-3 lg:mb-4 leading-tight">
-          {post.title} <span className="font-normal text-sm lg:text-base text-[#64748B]">- {post.status.toUpperCase()}</span>
+          {post.title} {/* <span className="font-normal text-sm lg:text-base text-[#64748B]">- {post.status.toUpperCase()}</span> */}
         </h2>
 
         {/* Data Points */}
@@ -94,9 +96,25 @@ export function CommunityPostNew({ post, onSelect, isSelected }: CommunityPostNe
           ))}
         </div>
 
+        {/* Dates */}
+        <div className="flex flex-col gap-1 mt-3 pt-2 mb-3 border-t border-[#F1F5F9] text-xs font-['Inter',sans-serif] text-[#64748B]">
+          {post.published_date && (
+            <div className="flex items-center gap-1">
+              <span className="font-medium text-[#475569]">Published Date:</span>
+              <span>{post.published_date}</span>
+            </div>
+          )}
+          {post.end_date && (
+            <div className="flex items-center gap-1">
+              <span className="font-medium text-[#475569]">End Date:</span>
+              <span>{post.end_date}</span>
+            </div>
+          )}
+        </div>
+
         {/* Summary */}
         {summary && (
-          <p className="font-['Inter',sans-serif] text-sm lg:text-[15px] text-[#64748B] leading-relaxed pt-3 border-t border-[#F1F5F9]">
+          <p className="font-['Inter',sans-serif] text-sm lg:text-[15px] text-[#64748B] leading-relaxed pt-3 border-t border-[#F1F5F9] bg-[#F8FAFC] p-3 rounded-lg mt-2">
             {summary}
           </p>
         )}

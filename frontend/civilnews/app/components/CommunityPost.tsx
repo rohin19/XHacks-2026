@@ -7,7 +7,7 @@ const categoryConfig = {
     color: '#1E3A8A',
     bgColor: '#EEF2FF',
     borderColor: '#C7D2FE',
-    label: 'Development',
+    label: 'City Projects',
   },
   road: {
     icon: Construction,

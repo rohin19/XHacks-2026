@@ -138,6 +138,7 @@ export default function NeighborhoodDashboard({ params }: Props) {
                         selectedTimeframe={selectedTimeframe}
                         setSelectedTimeframe={setSelectedTimeframe}
                         isDarkMode={isDarkMode}
+                        events={events} // Pass events for metrics
                     />
                     <CommunityFeed
                         events={events}

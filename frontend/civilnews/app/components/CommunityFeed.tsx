@@ -11,6 +11,8 @@ interface Event {
   summary?: string;
   status?: 'pending' | 'approved';
   source?: string;
+  end_date?: string;
+  published_date?: string;
 }
 
 interface CommunityFeedProps {
@@ -110,7 +112,9 @@ export function CommunityFeed({
             data: event.summary ? [event.summary] : [],
             location: event.location,
             lat: event.lat,
-            lng: event.lng
+            lng: event.lng,
+            end_date: event.end_date,
+            published_date: event.published_date
           }}
           onSelect={() => onSelectPost?.(event)}
           isSelected={selectedPostIds.includes(event.id)}

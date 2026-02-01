@@ -1,6 +1,7 @@
 import { Building2, Construction, Users, Megaphone, ChevronDown, X } from 'lucide-react';
 import { MetricsPanel } from './MetricsPanel';
 import { useState } from 'react';
+import { Event } from '@/app/hooks/useEvents';
 
 interface FilterBarProps {
   selectedCategory: string;
@@ -8,11 +9,12 @@ interface FilterBarProps {
   selectedTimeframe: string;
   setSelectedTimeframe: (timeframe: string) => void;
   isDarkMode: boolean;
+  events: Event[];
 }
 
 const categories = [
   { id: 'all', label: 'All Posts', icon: null },
-  { id: 'development', label: 'Development', icon: Building2 },
+  { id: 'development', label: 'City Projects', icon: Building2 },
   { id: 'road', label: 'Road Projects', icon: Construction },
   { id: 'council', label: 'Council', icon: Users },
   { id: 'service', label: 'Service Requests', icon: Megaphone },
@@ -31,6 +33,7 @@ export function FilterBar({
   selectedTimeframe,
   setSelectedTimeframe,
   isDarkMode,
+  events,
 }: FilterBarProps) {
   const [showMetrics, setShowMetrics] = useState(false);
   const selectedCategoryObj = categories.find(c => c.id === selectedCategory);
@@ -112,6 +115,7 @@ export function FilterBar({
             selectedCategory={selectedCategory}
             selectedTimeframe={selectedTimeframe}
             isDarkMode={isDarkMode}
+            events={events}
           />
         </div>
       </div>
