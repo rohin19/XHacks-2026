@@ -94,10 +94,24 @@ def transform_record(raw: dict[str, Any]) -> dict[str, Any] | None:
     service_request_type = _strip_zz_old(raw.get("service_request_type"))
     title = service_request_type or "Service Request"
     status = _normalize_status(raw.get("status"))
-    summary_parts = [f"Status: {status}"]
-    if raw.get("local_area"):
-        summary_parts.append(f"Area: {raw.get('local_area')}")
-    summary = "; ".join(summary_parts)
+
+    # Action statement for frontend: "{event} happened {location}. Status: ... Closure reason: ..."
+    event_label = title
+    location_parts = []
+    if raw.get("address") and str(raw.get("address")).strip():
+        location_parts.append(str(raw.get("address")).strip())
+    if raw.get("local_area") and str(raw.get("local_area")).strip():
+        location_parts.append(str(raw.get("local_area")).strip())
+    if location_parts:
+        location_str = " at " + ", ".join(location_parts)
+    else:
+        location_str = ""
+    summary = f"{event_label} happened{location_str}."
+    if status and status != "UNKNOWN":
+        summary += f" Status: {status}."
+    closure_reason = raw.get("closure_reason")
+    if closure_reason and str(closure_reason).strip():
+        summary += f" Closure reason: {str(closure_reason).strip()}."
 
     # created_at = published_at for ingested records; updated_at when last modified
     created_at = published_at

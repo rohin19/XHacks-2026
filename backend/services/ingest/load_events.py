@@ -138,7 +138,8 @@ def load_events(
     Each payload must have at least: published_at (and the 12 keys when serialized).
     id can be null so Supabase uses gen_random_uuid().
 
-    Returns the number of rows inserted.
+    Uses upsert on (title, type, location, start_date); conflicts update the existing row.
+    Returns the number of rows upserted.
     """
     if not events:
         return 0
@@ -164,6 +165,8 @@ def load_events(
             continue
     if not rows:
         return 0
-    client.table("events").insert(rows).execute()
-    logger.info("Inserted %s event(s) into Supabase events", len(rows))
+
+    client.table("events").upsert(rows, on_conflict="title,type,location,start_date").execute()
+    logger.info("Upserted %s event(s) into Supabase events", len(rows))
     return len(rows)
+
