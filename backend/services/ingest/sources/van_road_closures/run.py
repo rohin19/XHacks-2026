@@ -25,12 +25,13 @@ def _print_summaries(events: list[dict]) -> None:
     for ev in events:
         title = ev.get("title")
         summary = ev.get("summary")
+        starts_at = ev.get("start_date")
         ends_at = ev.get("end_date")
         published_at = ev.get("published_at")
         location = ev.get("location")
         type_attr = ev.get("type")
         source = ev.get("source")
-        print(f"TITLE: {title} \nType: {type_attr} \nSource: {source} \nLocation: {location} \nPUBLISHED-AT: {published_at} \nENDS-AT: {ends_at} \nSUMMARY: {summary} \n")
+        print(f"TITLE: {title} \nTYPE: {type_attr} \nSOURCE: {source} \nLOCATION: {location} \nPUBLISHED-AT: {published_at} \nSTARTS-AT: {starts_at} \nENDS-AT: {ends_at} \nSUMMARY: {summary} \n")
 
 
 def run(limit: int = 100, offset: int = 0, *, dry_run: bool = False) -> None:
@@ -49,7 +50,7 @@ def run(limit: int = 100, offset: int = 0, *, dry_run: bool = False) -> None:
 if __name__ == "__main__":
     try:
         # set dry_run=True to avoid writing to Supabase to test the pipeline
-        run(limit=100, offset=0, dry_run=False)
+        run(limit=100, offset=0, dry_run=True)
     except Exception as e:
         logger.exception("Pipeline failed: %s", e)
         sys.exit(1)

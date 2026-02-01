@@ -52,7 +52,7 @@ def _build_summary(record: dict[str, Any]) -> str:
     if location:
         parts.append(f"Road closure: {location}")
     if comp_date:
-        parts.append(f"Est. Completion: {comp_date}")
+        parts.append(f"Est. completion: {comp_date}")
     if url_link:
         parts.append(f"See more: {url_link}")
 
@@ -76,7 +76,7 @@ def transform_record(raw: dict[str, Any]) -> dict[str, Any] | None:
         logger.warning("Skipping record: missing or invalid comp_date")
         return None
 
-    # Temporal: start_date = published_at for closures, end_date unknown
+
     start_date = None
     end_date = _parse_date(comp_date)
 
@@ -86,7 +86,6 @@ def transform_record(raw: dict[str, Any]) -> dict[str, Any] | None:
     title = raw.get("project") or "Road Closure"
     summary = _build_summary(raw)
 
-    created_at = published_at
     updated_at = None
 
     return {
