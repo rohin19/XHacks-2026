@@ -42,8 +42,6 @@ When new events are added, the database automatically determines which neighborh
 
 This ensures every event is correctly tied to a geographic area.
 
----
-
 ### Safe Daily Data Updates
 
 The system is designed to import new data every day without creating duplicates.
@@ -53,8 +51,6 @@ The system is designed to import new data every day without creating duplicates.
 - Works even when some fields are missing
 
 This allows automated scripts to refresh data safely and repeatedly.
-
----
 
 ### Fast Map & Filter Performance
 
