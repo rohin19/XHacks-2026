@@ -1,31 +1,50 @@
 import { Home } from 'lucide-react';
+import Link from 'next/link';
+import { NEIGHBORHOODS } from '@/app/lib/neighborhoods';
+import { usePathname } from 'next/navigation';
 
 interface SidebarProps {
   isDarkMode?: boolean;
 }
 
 export function Sidebar({ isDarkMode = false }: SidebarProps) {
+  const pathname = usePathname();
+
+  // Get all neighborhoods sorted alphabetically
+  const neighborhoods = NEIGHBORHOODS.features
+    .map(feature => ({
+      name: feature.properties.name,
+      slug: feature.properties.slug
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
   return (
     <aside className={`w-64 h-screen border-r flex flex-col ${isDarkMode ? 'bg-[#1E293B] border-[#334155]' : 'bg-white border-[#E1E8ED]'}`}>
       <div className="p-6 shrink-0">
-        {/* Logo */}
-        <div className="flex flex-col items-center gap-3 mb-12">
-          <div className="h-[40px] overflow-clip relative shrink-0 w-[40px] bg-[#1E3A8A] rounded-full flex items-center justify-center">
+        {/* Logo - Clickable */}
+        <Link href="/" className="flex flex-col items-center gap-3 mb-12 cursor-pointer group">
+          <div className="h-[40px] overflow-clip relative shrink-0 w-[40px] bg-[#1E3A8A] rounded-full flex items-center justify-center transition-transform group-hover:scale-110">
             <p className="font-['Inter',sans-serif] font-semibold text-[15.2px] text-white">nn</p>
           </div>
-          <p className="font-['Inter',sans-serif] font-light text-[11px] text-[#64748B] tracking-[0.55px] uppercase">
+          <p className="font-['Inter',sans-serif] font-light text-[11px] text-[#64748B] tracking-[0.55px] uppercase group-hover:text-[#1E3A8A] transition-colors">
             neighborhood news
           </p>
-        </div>
+        </Link>
 
         {/* Navigation */}
         <nav className="space-y-2">
-          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-[#1E293B] bg-[#F1F5F9] transition-all duration-200">
-            <Home size={18} className="text-[#1E3A8A]" />
+          <Link
+            href="/"
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${pathname === '/'
+                ? 'text-[#1E293B] bg-[#F1F5F9]'
+                : 'text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#1E293B]'
+              }`}
+          >
+            <Home size={18} className={pathname === '/' ? 'text-[#1E3A8A]' : 'text-[#94A3B8]'} />
             <span className="text-sm font-['Inter',sans-serif] font-medium tracking-wide">
               Home
             </span>
-          </button>
+          </Link>
         </nav>
       </div>
 
@@ -36,21 +55,24 @@ export function Sidebar({ isDarkMode = false }: SidebarProps) {
             Communities
           </p>
           <div className="space-y-1">
-            {['Kerrisdale', 'Kitsilano', 'Mount Pleasant', 'Fairview', 'West End'].map((community, idx) => (
-              <button
-                key={idx}
-                className={`w-full flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 ${
-                  idx === 0 
-                    ? 'bg-[#EEF2FF] text-[#1E3A8A] border border-[#C7D2FE]' 
-                    : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#1E293B]'
-                }`}
-              >
-                <div className={`w-2 h-2 rounded-full ${idx === 0 ? 'bg-[#1E3A8A]' : 'bg-[#94A3B8]'}`} />
-                <span className="text-sm font-['Inter',sans-serif] font-medium">
-                  {community}
-                </span>
-              </button>
-            ))}
+            {neighborhoods.map((neighborhood) => {
+              const isActive = pathname === `/neighborhood/${neighborhood.slug}`;
+              return (
+                <Link
+                  key={neighborhood.slug}
+                  href={`/neighborhood/${neighborhood.slug}`}
+                  className={`w-full flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 ${isActive
+                      ? 'bg-[#EEF2FF] text-[#1E3A8A] border border-[#C7D2FE]'
+                      : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#1E293B]'
+                    }`}
+                >
+                  <div className={`w-2 h-2 rounded-full ${isActive ? 'bg-[#1E3A8A]' : 'bg-[#94A3B8]'}`} />
+                  <span className="text-sm font-['Inter',sans-serif] font-medium">
+                    {neighborhood.name}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </div>

@@ -76,18 +76,9 @@ export default function LandingMap({ userLocation, onNeighborhoodSelect }: Landi
                                 'case',
                                 ['==', ['get', 'slug'], hoveredNeighborhood],
                                 'rgba(135, 206, 250, 0.85)', // Hover state - bright sky blue
-                                [
-                                    'interpolate',
-                                    ['linear'],
-                                    ['get', 'id'],
-                                    1, 'rgba(100, 149, 237, 0.55)',   // Cornflower blue - more solid
-                                    5, 'rgba(65, 105, 225, 0.5)',     // Royal blue - more solid
-                                    10, 'rgba(30, 144, 255, 0.55)',   // Dodger blue - more solid
-                                    15, 'rgba(0, 191, 255, 0.5)',     // Deep sky blue - more solid
-                                    22, 'rgba(135, 206, 235, 0.55)'   // Sky blue - more solid
-                                ]
+                                'rgba(100, 149, 237, 0.55)'   // Default - transparent cornflower blue
                             ],
-                            'fill-opacity': 1  // Full opacity for solid fills
+                            'fill-opacity': 1
                         }}
                     />
 
@@ -100,19 +91,37 @@ export default function LandingMap({ userLocation, onNeighborhoodSelect }: Landi
                                 'case',
                                 ['==', ['get', 'slug'], hoveredNeighborhood],
                                 'rgba(135, 206, 250, 1)',     // Hover state - bright sky blue
-                                'rgba(100, 149, 237, 0.4)'    // Default state - cornflower blue semi-transparent
+                                'rgba(100, 149, 237, 0.8)'    // Default state - more opaque border
                             ],
                             'line-width': [
                                 'case',
                                 ['==', ['get', 'slug'], hoveredNeighborhood],
-                                2.5,  // Hover state - thicker
-                                1.2   // Default state - thinner for glass effect
+                                3.5,  // Hover state - bolder (increased from 2.5)
+                                2.5   // Default state - bolder (increased from 1.5)
                             ],
-                            'line-blur': 1  // Enhanced blur for glass effect
+                            'line-blur': 0.3  // Reduced blur for crisper borders (was 0.5)
                         }}
                     />
 
-
+                    {/* Neighborhood Labels */}
+                    <Layer
+                        id="neighborhoods-labels"
+                        type="symbol"
+                        layout={{
+                            'text-field': ['get', 'name'],
+                            'text-font': ['Open Sans Bold', 'Arial Unicode MS Regular'],
+                            'text-size': 14,
+                            'text-anchor': 'center',
+                            'text-allow-overlap': true,
+                            'text-optional': false
+                        }}
+                        paint={{
+                            'text-color': '#ffffff',
+                            'text-halo-color': 'rgba(100, 149, 237, 0.4)',
+                            'text-halo-width': 2.5,
+                            'text-opacity': 1
+                        }}
+                    />
 
                 </Source>
 
