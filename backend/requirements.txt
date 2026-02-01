@@ -5,3 +5,7 @@ supabase>=2.0.0
 
 # 311 / SQLAlchemy load
 sqlalchemy>=2.0.0
+
+# API
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
