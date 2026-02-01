@@ -36,10 +36,15 @@ def _get_session_with_retries(
     return session
 
 
+# ODS API order: newest first (service_request_open_timestamp descending)
+ORDER_RECENT_FIRST = "service_request_open_timestamp desc"
+
+
 def fetch_raw_requests(
     limit: int = 100,
     offset: int = 0,
     *,
+    order_by: str | None = ORDER_RECENT_FIRST,
     api_base: str | None = None,
     timeout: int = 60,
 ) -> list[dict[str, Any]]:
@@ -47,12 +52,14 @@ def fetch_raw_requests(
     Fetch raw 311 service request records from the Open Data API.
 
     Uses environment variable VAN_311_API_BASE for the endpoint if set.
+    By default requests recent events first (order_by=service_request_open_timestamp desc).
     Applies network retries and validates response status before returning
     the list of record dictionaries (prevents data loss before transformation).
 
     Args:
         limit: Max number of records to return (default 100).
         offset: Pagination offset (default 0).
+        order_by: ODS order_by clause (default: recent first). Set to None to use API default.
         api_base: Override API base URL (default: env VAN_311_API_BASE or DEFAULT_API_BASE).
         timeout: Request timeout in seconds.
 
@@ -64,7 +71,9 @@ def fetch_raw_requests(
         ValueError: On invalid API response (e.g. missing 'results').
     """
     base = api_base or os.environ.get("VAN_311_API_BASE", DEFAULT_API_BASE)
-    params = {"limit": limit, "offset": offset}
+    params: dict[str, str | int] = {"limit": limit, "offset": offset}
+    if order_by:
+        params["order_by"] = order_by
 
     session = _get_session_with_retries()
     try:
