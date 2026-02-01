@@ -113,25 +113,7 @@ export default function LandingMap({ userLocation, onNeighborhoodSelect }: Landi
                     />
 
 
-                    {/* Neighborhood Labels */}
-                    <Layer
-                        id="neighborhoods-labels"
-                        type="symbol"
-                        layout={{
-                            'text-field': ['get', 'name'],
-                            'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
-                            'text-size': 14,
-                            'text-transform': 'uppercase',
-                            'text-letter-spacing': 0.05,
-                            'text-anchor': 'center'
-                        }}
-                        paint={{
-                            'text-color': '#ffffff',
-                            'text-halo-color': 'rgba(0, 0, 0, 0.7)',
-                            'text-halo-width': 1.5,
-                            'text-halo-blur': 1
-                        }}
-                    />
+
                 </Source>
 
                 {/* User Location Marker */}

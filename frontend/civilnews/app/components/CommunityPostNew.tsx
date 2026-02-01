@@ -56,21 +56,20 @@ export function CommunityPostNew({ post, onSelect, isSelected }: CommunityPostNe
   // Extract summary (the line starting with "Summary:")
   const summaryLine = post.data.find(line => line.startsWith('Summary:'));
   const summary = summaryLine ? summaryLine.replace('Summary: ', '') : '';
-  
+
   // Get data points without the summary
   const dataPoints = post.data.filter(line => !line.startsWith('Summary:'));
 
   return (
-    <article 
+    <article
       onClick={onSelect}
-      className={`bg-white border-2 rounded-lg hover:border-[#CBD5E1] transition-all hover:shadow-md group overflow-hidden cursor-pointer min-w-[280px] ${ 
-        isSelected ? 'border-[#3B82F6] shadow-lg' : 'border-[#E2E8F0]'
-      }`}
+      className={`bg-white border-2 rounded-lg hover:border-[#CBD5E1] transition-all hover:shadow-md group overflow-hidden cursor-pointer min-w-[280px] ${isSelected ? 'border-[#3B82F6] shadow-lg' : 'border-[#E2E8F0]'
+        }`}
     >
       <div className="p-4 lg:p-6">
         {/* Category Tag */}
         <div className="flex items-center gap-2 mb-3">
-          <div 
+          <div
             className="w-7 h-7 rounded-md flex items-center justify-center"
             style={{ backgroundColor: config.bgColor }}
           >
@@ -79,20 +78,11 @@ export function CommunityPostNew({ post, onSelect, isSelected }: CommunityPostNe
           <span className="font-['Work_Sans',sans-serif] text-[10px] tracking-[1.5px] uppercase font-bold" style={{ color: config.color }}>
             {config.label}
           </span>
-          <span
-            className={`ml-auto px-2.5 py-0.5 rounded-md text-[9px] tracking-wider font-bold uppercase ${
-              post.status === 'approved'
-                ? 'bg-[#D1FAE5] text-[#047857]'
-                : 'bg-[#FEF3C7] text-[#B45309]'
-            }`}
-          >
-            {post.status}
-          </span>
         </div>
 
         {/* Title */}
         <h2 className="font-['Work_Sans',sans-serif] font-bold text-lg lg:text-xl text-[#0F172A] mb-3 lg:mb-4 leading-tight">
-          {post.title}
+          {post.title} <span className="font-normal text-sm lg:text-base text-[#64748B]">- {post.status.toUpperCase()}</span>
         </h2>
 
         {/* Data Points */}

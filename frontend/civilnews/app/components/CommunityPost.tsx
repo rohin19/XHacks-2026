@@ -54,7 +54,7 @@ export function CommunityPost({ post }: CommunityPostProps) {
       <div className="p-6">
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">
-          <div 
+          <div
             className="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm"
             style={{ backgroundColor: config.bgColor }}
           >
@@ -69,31 +69,21 @@ export function CommunityPost({ post }: CommunityPostProps) {
               {post.timestamp}
             </span>
           </div>
-          <span
-            className={`px-3.5 py-1.5 rounded-full text-[11px] tracking-wider font-bold uppercase ${
-              post.status === 'approved'
-                ? 'bg-[#D1FAE5] text-[#047857] border border-[#A7F3D0]'
-                : 'bg-[#FEF3C7] text-[#B45309] border border-[#FDE68A]'
-            }`}
-          >
-            {post.status}
-          </span>
-        </div>
 
-        {/* Title */}
-        <h2 className="font-['Work_Sans',sans-serif] font-bold text-2xl text-[#0F172A] mb-4 leading-tight tracking-tight">
-          {post.title}
-        </h2>
+          {/* Title */}
+          <h2 className="font-['Work_Sans',sans-serif] font-bold text-2xl text-[#0F172A] mb-4 leading-tight tracking-tight">
+            {post.title} <span className="font-normal text-sm lg:text-base text-[#64748B]">- {post.status.toUpperCase()}</span>
+          </h2>
 
-        {/* Data Points */}
-        <div className="bg-gradient-to-br from-[#F8FAFC] to-[#F1F5F9] rounded-xl p-5 space-y-2.5 border border-[#E2E8F0] shadow-inner">
-          {post.data.map((line, index) => (
-            <p key={index} className="font-['Inter',sans-serif] text-[16px] text-[#1E293B] leading-relaxed font-medium">
-              {line}
-            </p>
-          ))}
+          {/* Data Points */}
+          <div className="bg-gradient-to-br from-[#F8FAFC] to-[#F1F5F9] rounded-xl p-5 space-y-2.5 border border-[#E2E8F0] shadow-inner">
+            {post.data.map((line, index) => (
+              <p key={index} className="font-['Inter',sans-serif] text-[16px] text-[#1E293B] leading-relaxed font-medium">
+                {line}
+              </p>
+            ))}
+          </div>
         </div>
-      </div>
     </article>
   );
 }

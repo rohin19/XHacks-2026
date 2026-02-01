@@ -127,10 +127,10 @@ export function MetricsPanel({ selectedCategory, selectedTimeframe, isDarkMode }
   };
 
   return (
-    <div className="flex items-center gap-6 px-[100px] py-[0px]">
+    <div className="flex items-center gap-6 px-0 py-0">
       {metrics.map((metric, index) => (
-        <div key={index} className="text-right">
-          <div 
+        <div key={index} className="text-left">
+          <div
             className="font-['Work_Sans',sans-serif] font-bold text-6xl leading-none mb-1.5"
             style={{ color: getMetricColor(metric.label) }}
           >
