@@ -146,7 +146,6 @@ def transform_record(raw: dict[str, Any]) -> Event | None:
         geom=geom,
         neighborhood_id=None,  # Resolved in load.py from local_area -> neighborhoods.id
         url=None,
-        severity=0,
         raw_payload=raw_payload,
     )
 
