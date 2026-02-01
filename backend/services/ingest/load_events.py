@@ -165,6 +165,8 @@ def load_events(
             continue
     if not rows:
         return 0
+
     client.table("events").upsert(rows, on_conflict="title,type,location,start_date").execute()
     logger.info("Upserted %s event(s) into Supabase events", len(rows))
     return len(rows)
+
