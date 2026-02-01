@@ -17,7 +17,7 @@ export default function AddressSearch({ onLocationSelect }: AddressSearchProps) 
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [selectedNeighborhood, setSelectedNeighborhood] = useState<string | null>(null);
     const [selectedLocation, setSelectedLocation] = useState<[number, number] | null>(null);
-    const searchTimeout = useRef<NodeJS.Timeout>();
+    const searchTimeout = useRef<NodeJS.Timeout | null>(null);
     const router = useRouter();
 
     // Debounced search
