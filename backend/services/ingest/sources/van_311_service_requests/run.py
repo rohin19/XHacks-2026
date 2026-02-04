@@ -25,7 +25,7 @@ def run(limit: int = 100, offset: int = 0) -> None:
     logger.info("Fetched %s raw record(s)", len(raw))
     events = transform_batch(raw)
     logger.info("Transformed %s event(s)", len(events))
-    inserted = load_events(events, resolve_neighborhood_by_name=True)
+    inserted = load_events(events, resolve_neighborhood_by_name=False)
     logger.info("Done: %s inserted", inserted)
 
 

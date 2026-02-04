@@ -10,7 +10,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, TypedDict
 
-# Load .env from repo root (backend/services/ingest -> 3 levels to backend, 4 to repo)
+# Load .env
 _REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 
 
@@ -165,8 +165,14 @@ def load_events(
             continue
     if not rows:
         return 0
+    deduped_rows = {}
+    for row in rows:
+        key = (row["title"], row["type"], str(row["location"]), row["start_date"])
+        deduped_rows[key] = row
 
-    client.table("events").upsert(rows, on_conflict="title,type,location,start_date").execute()
-    logger.info("Upserted %s event(s) into Supabase events", len(rows))
-    return len(rows)
+    final_rows = list(deduped_rows.values())
+    logger.info("Deduped %s event(s) to %s", len(rows), len(deduped_rows))
+    client.table("events").upsert(final_rows, on_conflict="title,type,location,start_date").execute()
+    logger.info("Upserted %s event(s) into Supabase events", len(final_rows))
+    return len(final_rows)
 
