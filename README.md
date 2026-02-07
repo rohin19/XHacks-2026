@@ -4,6 +4,8 @@ We've always felt a little disconnected from our local community—not socially,
 
 That's why we built **Neighborhood News**!
 
+https://neighborhood-news2.vercel.app/
+
 ## What is it?
 
 Neighborhood News is a **spatial intelligence platform** that maps city events (road closures, construction, community alerts) onto an interactive neighborhood grid.  
